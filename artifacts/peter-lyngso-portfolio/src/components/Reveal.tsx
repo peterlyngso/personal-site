@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, ReactNode } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 
 interface RevealProps {
@@ -9,12 +9,12 @@ interface RevealProps {
   margin?: string;
 }
 
-export function Reveal({ 
-  children, 
-  className, 
-  delay = 0, 
+export function Reveal({
+  children,
+  className,
+  delay = 0,
   animation = 'up',
-  margin = '-50px'
+  margin = '-50px',
 }: RevealProps) {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -32,7 +32,7 @@ export function Reveal({
           if (ref.current) observer.unobserve(ref.current);
         }
       },
-      { rootMargin: margin }
+      { rootMargin: margin },
     );
 
     if (ref.current) observer.observe(ref.current);
@@ -44,10 +44,10 @@ export function Reveal({
       ref={ref}
       className={cn(
         'reveal-base',
-        animation === 'up' && !isVisible && 'reveal-up',
-        animation === 'scale' && !isVisible && 'reveal-scale',
+        animation === 'scale' && 'reveal-scale',
+        animation === 'none' && 'reveal-none',
         isVisible && 'reveal-visible',
-        className
+        className,
       )}
       style={{ transitionDelay: `${delay}s` }}
     >

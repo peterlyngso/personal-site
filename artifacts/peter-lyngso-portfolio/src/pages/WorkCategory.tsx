@@ -1,64 +1,55 @@
-import { useRoute, Link } from 'wouter';
-import { projects, Category } from '@/data/content';
-import { Thumbnail } from '@/components/Thumbnail';
+import { Link, useRoute } from 'wouter';
+import { Category, projects } from '@/data/content';
 import { Reveal } from '@/components/Reveal';
 import { SEO } from '@/components/SEO';
+import { Thumbnail } from '@/components/Thumbnail';
 
 export default function WorkCategory() {
   const [, params] = useRoute('/work/:category');
   const category = params?.category as Category;
-
-  const categoryProjects = projects.filter(p => p.category.toLowerCase() === category?.toLowerCase());
+  const categoryProjects = projects.filter(
+    (project) => project.category.toLowerCase() === category?.toLowerCase(),
+  );
 
   if (!categoryProjects.length) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center pt-32 px-6">
+      <main className="case-study" data-testid="page-category-not-found">
         <SEO title="Category Not Found" />
-        <p className="font-sans text-xs tracking-[0.2em] uppercase opacity-50 mb-8">Category not found</p>
-        <Link href="/" className="border border-[#EAE6DF]/20 px-8 py-4 font-sans text-[10px] uppercase tracking-[0.25em] hover:bg-[#EAE6DF]/10 transition-colors">
-          Return Home
+        <p className="case-study__eyebrow">Category not found</p>
+        <Link href="/" className="case-study__link" data-testid="link-return-home">
+          Return home
         </Link>
-      </div>
+      </main>
     );
   }
 
   return (
     <>
       <SEO title={`${category} Work`} />
-      <div className="min-h-screen pt-40 pb-32 px-6 md:px-12 max-w-[1600px] mx-auto">
-        <header className="mb-32 text-center md:text-left">
-          <Reveal>
-            <h1 className="font-serif text-6xl md:text-8xl tracking-tight leading-none">
-              {category}
-            </h1>
-          </Reveal>
-          <Reveal delay={0.3}>
-            <p className="font-sans text-[10px] md:text-xs tracking-[0.25em] uppercase text-[#EAE6DF]/50 mt-8 flex items-center justify-center md:justify-start gap-6">
-              <span className="w-12 h-[1px] bg-[#EAE6DF]/20 block"></span>
-              Selected Works
-            </p>
-          </Reveal>
-        </header>
+      <main className="category-page" data-testid={`page-category-${category.toLowerCase()}`}>
+        <Reveal className="category-heading">
+          <h1>{category}</h1>
+          <p>{categoryProjects.length} projects<br />Selected work</p>
+        </Reveal>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-24">
+        <div className="category-list">
           {categoryProjects.map((project, index) => (
-            <Reveal key={project.slug} delay={(index % 2) * 0.15}>
-              <Link href={`/project/${project.slug}`} className="group block">
-                <Thumbnail project={project} className="mb-8 shadow-xl shadow-black/40" />
-                <div>
-                  <h2 className="font-serif text-3xl md:text-4xl leading-tight group-hover:text-[#EAE6DF]/70 transition-colors duration-500 mb-6">{project.title}</h2>
-                  <div className="flex justify-between items-center text-[#EAE6DF]/40">
-                    <p className="font-sans text-[9px] md:text-[10px] uppercase tracking-[0.25em]">{project.clientOutlet || "Independent"}</p>
-                    {project.isDraft && (
-                      <p className="font-sans text-[9px] uppercase tracking-[0.25em] border border-[#EAE6DF]/20 px-2 py-1">Draft</p>
-                    )}
-                  </div>
+            <Reveal key={project.slug} delay={(index % 2) * 0.08} className="category-project">
+              <Link
+                href={`/project/${project.slug}`}
+                className="block"
+                data-testid={`link-category-project-${project.slug}`}
+              >
+                <Thumbnail project={project} overlay="project" className="category-project__media" />
+                <div className="category-project__caption">
+                  <h2>{project.title}</h2>
+                  <p>{project.clientOutlet || 'Independent'}</p>
                 </div>
               </Link>
             </Reveal>
           ))}
         </div>
-      </div>
+      </main>
     </>
   );
 }

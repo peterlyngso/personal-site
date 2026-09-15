@@ -1,35 +1,65 @@
 import { Project } from '@/data/content';
 import { cn } from '@/lib/utils';
 
-export function Thumbnail({ project, className }: { project: Project; className?: string }) {
-  return (
-    <div className={cn("relative w-full aspect-[16/9] bg-[#1A1A18] overflow-hidden group", className)}>
-      <div className="absolute inset-0 opacity-[0.05] pointer-events-none mix-blend-overlay z-10" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
+type ThumbnailProps = {
+  project: Project;
+  className?: string;
+  overlay?: 'door' | 'project' | 'none';
+};
 
+function PlaceholderFrame({ project }: { project: Project }) {
+  const categoryClass = `frame-placeholder--${project.category.toLowerCase()}`;
+
+  return (
+    <div
+      className={cn('frame-placeholder', categoryClass)}
+      aria-label={`${project.category} placeholder frame for ${project.title}`}
+      data-testid={`media-placeholder-${project.slug}`}
+    >
+      <span className="frame-placeholder__shape frame-placeholder__shape--one" />
+      <span className="frame-placeholder__shape frame-placeholder__shape--two" />
+      <span className="frame-placeholder__shape frame-placeholder__shape--three" />
+      <span className="frame-placeholder__line frame-placeholder__line--one" />
+      <span className="frame-placeholder__line frame-placeholder__line--two" />
+      <span className="frame-placeholder__label">Local frame / draft asset</span>
+    </div>
+  );
+}
+
+export function Thumbnail({ project, className, overlay = 'none' }: ThumbnailProps) {
+  return (
+    <div className={cn('media-frame', className)} data-testid={`media-frame-${project.slug}`}>
       {project.thumbnailVideo ? (
-        <video 
+        <video
           src={project.thumbnailVideo}
           autoPlay
           muted
           loop
           playsInline
-          className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1.5s] ease-out motion-safe:group-hover:scale-[1.03]"
+          aria-label={project.title}
+          data-testid={`video-thumbnail-${project.slug}`}
         />
       ) : project.thumbnailStill ? (
-        <img 
-          src={project.thumbnailStill} 
+        <img
+          src={project.thumbnailStill}
           alt={project.title}
-          className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1.5s] ease-out motion-safe:group-hover:scale-[1.03]"
+          data-testid={`image-thumbnail-${project.slug}`}
         />
       ) : (
-        <div className="absolute inset-0 flex items-center justify-center p-8 bg-gradient-to-br from-[#1A1A18] to-[#0F0F0E] transition-transform duration-[1.5s] ease-out motion-safe:group-hover:scale-[1.03]">
-           <div className="text-center w-full max-w-2xl px-6 relative z-20">
-             <h3 className="font-serif text-3xl md:text-5xl lg:text-6xl text-[#EAE6DF] opacity-90 leading-[1.1] mb-8">{project.title}</h3>
-             <div className="w-12 h-[1px] bg-[#EAE6DF]/20 mx-auto mb-8"></div>
-             <p className="font-sans text-[9px] md:text-[10px] uppercase tracking-[0.3em] text-[#EAE6DF]/40">
-               {project.category} {project.isDraft ? '— DRAFT ENTRY' : ''}
-             </p>
-           </div>
+        <PlaceholderFrame project={project} />
+      )}
+
+      {overlay === 'door' && (
+        <div className="door-overlay">
+          <span className="door-overlay__number">0{project.category === 'Labor' ? '1' : project.category === 'Politics' ? '2' : '3'}</span>
+          <span className="door-overlay__title">{project.category.toUpperCase()}</span>
+        </div>
+      )}
+
+      {overlay === 'project' && (
+        <div className="project-overlay">
+          <span className="project-overlay__title">{project.title}</span>
+          <span className="project-overlay__category">{project.category}</span>
         </div>
       )}
     </div>
