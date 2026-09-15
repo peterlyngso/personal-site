@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Peter Lyngso Portfolio"
+description = "A cinematic personal portfolio for producer, director, director of photography, and media strategist Peter Lyngso. The site organizes work across Labor, Politics, and Documentary, with moving-image project indexes, restrained editorial case studies, and an editable credits and about section."
+version = "1.0.0"
+id = "artifacts/peter-lyngso-portfolio"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 26247
+
+[services.development]
+run = "pnpm --filter @workspace/peter-lyngso-portfolio run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/peter-lyngso-portfolio", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/peter-lyngso-portfolio/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "26247"
+BASE_PATH = "/"

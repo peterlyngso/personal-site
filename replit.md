@@ -1,6 +1,6 @@
-# [Project name]
+# Peter Lyngso Portfolio
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A cinematic, content-driven portfolio for Peter Lyngso's labor, political, and documentary work.
 
 ## Run & Operate
 
@@ -22,19 +22,27 @@ _Replace the heading above with the project's name, and this line with one sente
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- Portfolio app: `artifacts/peter-lyngso-portfolio`
+- Editable project and credits content: `artifacts/peter-lyngso-portfolio/src/data/content.ts`
+- Local media: `artifacts/peter-lyngso-portfolio/public`
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Keep the portfolio static and content-driven; do not add a backend, database, AI/API calls, background jobs, or paid runtime services unless they become genuinely necessary.
+- Keep dependencies minimal and use lightweight native CSS for motion.
+- Use optimized silent looping video only where it materially improves portfolio browsing; always support static local placeholders.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+- Browsing across Labor, Politics, and Documentary work
+- Editorial project case studies
+- About and extended production credits
+- Centralized draft content designed for later curation
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- Favor the cheapest practical build and hosting approach: fast-loading static pages, local structured content, minimal dependencies, and no overbuilding.
+- Do not publish until Peter explicitly asks.
 
 ## Gotchas
 

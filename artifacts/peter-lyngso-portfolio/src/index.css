@@ -1,0 +1,141 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&display=swap');
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: 'Inter', sans-serif;
+  --font-serif: 'Instrument Serif', serif;
+
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-card-border: hsl(var(--card-border));
+
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-popover-border: hsl(var(--popover-border));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --background: 60 5% 6%;
+  --foreground: 40 14% 89%;
+  --card: 60 5% 8%;
+  --card-foreground: 40 14% 89%;
+  --popover: 60 5% 6%;
+  --popover-foreground: 40 14% 89%;
+  --primary: 40 14% 89%;
+  --primary-foreground: 60 5% 6%;
+  --secondary: 60 5% 15%;
+  --secondary-foreground: 40 14% 89%;
+  --muted: 60 5% 15%;
+  --muted-foreground: 40 10% 60%;
+  --accent: 60 5% 15%;
+  --accent-foreground: 40 14% 89%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 40 14% 89%;
+  --border: 60 5% 15%;
+  --input: 60 5% 15%;
+  --ring: 40 14% 89%;
+  --radius: 0.5rem;
+}
+
+.dark {
+  --background: 60 5% 6%;
+  --foreground: 40 14% 89%;
+  --card: 60 5% 8%;
+  --card-foreground: 40 14% 89%;
+  --popover: 60 5% 6%;
+  --popover-foreground: 40 14% 89%;
+  --primary: 40 14% 89%;
+  --primary-foreground: 60 5% 6%;
+  --secondary: 60 5% 15%;
+  --secondary-foreground: 40 14% 89%;
+  --muted: 60 5% 15%;
+  --muted-foreground: 40 10% 60%;
+  --accent: 60 5% 15%;
+  --accent-foreground: 40 14% 89%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 40 14% 89%;
+  --border: 60 5% 15%;
+  --input: 60 5% 15%;
+  --ring: 40 14% 89%;
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
+
+/* Texture overlay for the entire body to give it a cinematic grain */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E");
+}
+
+/* Native CSS Reveal Animations */
+.reveal-base {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .reveal-base {
+    transition-property: opacity, transform;
+    transition-duration: 1s;
+    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .reveal-up {
+    transform: translateY(30px);
+  }
+  .reveal-scale {
+    transform: scale(0.98);
+  }
+  .reveal-visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-base {
+    transition: opacity 0.5s ease;
+  }
+  .reveal-visible {
+    opacity: 1;
+  }
+}
