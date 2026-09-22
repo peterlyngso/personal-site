@@ -1,0 +1,1 @@
+- [Media readiness](media-readiness.md) — keep optional video and finished-work fields empty until verified project assets or URLs are available; do not infer media facts.
