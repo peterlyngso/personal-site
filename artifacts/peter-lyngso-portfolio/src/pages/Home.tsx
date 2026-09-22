@@ -1,25 +1,11 @@
 import { Link } from 'wouter';
-import { projects } from '@/data/content';
+import { homeCuration, projects } from '@/data/content';
 import { Reveal } from '@/components/Reveal';
 import { SEO } from '@/components/SEO';
 import { Thumbnail } from '@/components/Thumbnail';
 
-const doors = [
-  { category: 'Labor' as const, slug: 'colectivo-mpu' },
-  { category: 'Politics' as const, slug: 'miguel-alvelo-rivera' },
-  { category: 'Documentary' as const, slug: 'indiana-data-centers' },
-];
-
-const selectedSlugs = [
-  'colectivo-mpu',
-  'miguel-alvelo-rivera',
-  'indiana-data-centers',
-  'kellogg-strike',
-  'south-bend-doc',
-];
-
 export default function Home() {
-  const selectedProjects = selectedSlugs
+  const selectedProjects = homeCuration.selectedWork
     .map((slug) => projects.find((project) => project.slug === slug))
     .filter((project): project is (typeof projects)[number] => Boolean(project));
 
@@ -31,8 +17,8 @@ export default function Home() {
           Selected work / 01—03
         </div>
         <div className="door-grid" data-testid="category-doors">
-          {doors.map((door, index) => {
-            const project = projects.find((item) => item.slug === door.slug);
+          {homeCuration.doors.map((door, index) => {
+            const project = projects.find((item) => item.slug === door.projectSlug);
             if (!project) return null;
 
             return (
@@ -42,7 +28,13 @@ export default function Home() {
                   className="door-link"
                   data-testid={`link-door-${door.category.toLowerCase()}`}
                 >
-                  <Thumbnail project={project} overlay="door" className="media-frame--door" />
+                  <Thumbnail
+                    project={project}
+                    media={door.media}
+                    overlay="door"
+                    className="media-frame--door"
+                    priority
+                  />
                 </Link>
               </Reveal>
             );
@@ -61,7 +53,7 @@ export default function Home() {
                   className="block"
                   data-testid={`link-selected-project-${project.slug}`}
                 >
-                  <Thumbnail project={project} overlay="project" className="mosaic__media" />
+                   <Thumbnail project={project} overlay="project" className="mosaic__media" />
                 </Link>
               </Reveal>
             ))}

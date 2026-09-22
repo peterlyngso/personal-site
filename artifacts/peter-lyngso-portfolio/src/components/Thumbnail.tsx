@@ -1,53 +1,37 @@
-import { Project } from '@/data/content';
+import { MediaItem, Project } from '@/data/content';
 import { cn } from '@/lib/utils';
+import { MediaItemView } from '@/components/MediaItemView';
 
 type ThumbnailProps = {
   project: Project;
+  media?: MediaItem;
   className?: string;
   overlay?: 'door' | 'project' | 'none';
+  priority?: boolean;
 };
 
-function PlaceholderFrame({ project }: { project: Project }) {
-  const categoryClass = `frame-placeholder--${project.category.toLowerCase()}`;
+export function Thumbnail({
+  project,
+  media = project.media.previewLoop || project.media.hero,
+  className,
+  overlay = 'none',
+  priority = false,
+}: ThumbnailProps) {
+  const fallback = media.kind === 'video' ? project.media.hero : undefined;
 
   return (
     <div
-      className={cn('frame-placeholder', categoryClass)}
-      aria-label={`${project.category} placeholder frame for ${project.title}`}
-      data-testid={`media-placeholder-${project.slug}`}
+      className={cn('media-frame', className)}
+      style={media.aspectRatio ? { aspectRatio: media.aspectRatio } : undefined}
+      data-testid={`media-frame-${project.slug}`}
     >
-      <span className="frame-placeholder__shape frame-placeholder__shape--one" />
-      <span className="frame-placeholder__shape frame-placeholder__shape--two" />
-      <span className="frame-placeholder__shape frame-placeholder__shape--three" />
-      <span className="frame-placeholder__line frame-placeholder__line--one" />
-      <span className="frame-placeholder__line frame-placeholder__line--two" />
-      <span className="frame-placeholder__label">Local frame / draft asset</span>
-    </div>
-  );
-}
-
-export function Thumbnail({ project, className, overlay = 'none' }: ThumbnailProps) {
-  return (
-    <div className={cn('media-frame', className)} data-testid={`media-frame-${project.slug}`}>
-      {project.thumbnailVideo ? (
-        <video
-          src={project.thumbnailVideo}
-          autoPlay
-          muted
-          loop
-          playsInline
-          aria-label={project.title}
-          data-testid={`video-thumbnail-${project.slug}`}
-        />
-      ) : project.thumbnailStill ? (
-        <img
-          src={project.thumbnailStill}
-          alt={project.title}
-          data-testid={`image-thumbnail-${project.slug}`}
-        />
-      ) : (
-        <PlaceholderFrame project={project} />
-      )}
+      <MediaItemView
+        media={media}
+        fallback={fallback}
+        priority={priority}
+        className="media-frame__asset"
+        testId={`media-${project.slug}`}
+      />
 
       {overlay === 'door' && (
         <div className="door-overlay">

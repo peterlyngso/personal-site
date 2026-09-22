@@ -14,7 +14,6 @@ export default function About() {
             Filmmaker and media strategist whose work sits inside labor movements,
             political campaigns, and documentary reporting.
           </p>
-          <p className="about-page__pending">Full biography and contact details pending verification.</p>
         </Reveal>
 
         <Reveal delay={0.12} className="about-page__credits">
@@ -25,7 +24,6 @@ export default function About() {
                 <h2>{credit.show}</h2>
                 <div>
                   <p>{credit.outlet}</p>
-                  <p>{credit.notes}</p>
                 </div>
               </div>
             ))}

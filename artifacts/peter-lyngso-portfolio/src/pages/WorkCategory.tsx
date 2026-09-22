@@ -41,9 +41,9 @@ export default function WorkCategory() {
                 data-testid={`link-category-project-${project.slug}`}
               >
                 <Thumbnail project={project} overlay="project" className="category-project__media" />
-                <div className="category-project__caption">
+                  <div className="category-project__caption" data-testid={`caption-category-project-${project.slug}`}>
                   <h2>{project.title}</h2>
-                  <p>{project.clientOutlet || 'Independent'}</p>
+                    {project.clientOutlet ? <p>{project.clientOutlet}</p> : null}
                 </div>
               </Link>
             </Reveal>

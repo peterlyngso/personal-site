@@ -1,24 +1,70 @@
 export type Category = 'Labor' | 'Politics' | 'Documentary';
+export type MediaKind = 'image' | 'video';
 
 export interface ProjectCredit {
   role: string;
   name: string;
 }
 
+/**
+ * A media item is intentionally content-owned so editorial changes do not
+ * require changing page layout code. A missing src is a valid unassigned item
+ * and renders as the site's dark media fallback.
+ */
+export interface MediaItem {
+  kind: MediaKind;
+  src?: string;
+  alt: string;
+  caption?: string;
+  aspectRatio?: string;
+  objectPosition?: string;
+  poster?: string;
+}
+
+export interface ProjectMedia {
+  hero: MediaItem;
+  previewLoop?: MediaItem;
+  finishedWorkUrl?: string;
+  gallery?: MediaItem[];
+}
+
 export interface Project {
   slug: string;
   title: string;
   category: Category;
-  roles: string[]; // e.g., ['Producer', 'Director', 'Editor']
-  clientOutlet?: string; 
-  context?: string; // Editorial context/description
-  thumbnailVideo?: string; // Local path to mp4 (for immediate cinematic browsing)
-  thumbnailStill?: string; // Local path to fallback/still image
-  embedUrl?: string; // Link to the finished work (YouTube/Vimeo)
+  roles: string[];
+  clientOutlet?: string;
+  context?: string;
+  media: ProjectMedia;
   credits?: ProjectCredit[];
-  pressOutcomes?: string[]; // Press hits or tangible outcomes
-  isDraft?: boolean; // Indicates the entry is pending full verification/assets
+  pressOutcomes?: string[];
 }
+
+export interface CategoryDoor {
+  category: Category;
+  projectSlug: string;
+  media: MediaItem;
+}
+
+const unassignedMedia = (title: string): ProjectMedia => ({
+  hero: {
+    kind: 'image',
+    alt: `${title} project media`,
+    aspectRatio: '1.66 / 1',
+  },
+});
+
+const representativeMedia = (
+  src: string,
+  alt: string,
+  aspectRatio = '1.66 / 1',
+): MediaItem => ({
+  kind: 'image',
+  src,
+  alt,
+  aspectRatio,
+  objectPosition: '50% 50%',
+});
 
 export const projects: Project[] = [
   // --- LABOR ---
@@ -28,15 +74,19 @@ export const projects: Project[] = [
     category: 'Labor',
     clientOutlet: 'More Perfect Union',
     roles: ['Producer', 'Director', 'Editor'],
-    context: 'A deeply reported look at the Colectivo organizing effort. [DRAFT: Awaiting full editorial context]',
-    isDraft: true,
+    media: {
+      hero: representativeMedia('/media/peter-labor-selection.jpg', 'Colectivo project media'),
+      gallery: [
+        representativeMedia('/media/peter-labor-selection.jpg', 'Colectivo project media, frame one'),
+      ],
+    },
   },
   {
     slug: 'ups-part-timer',
     title: 'UPS $25 Part-Timer Campaign',
     category: 'Labor',
     roles: [],
-    isDraft: true,
+    media: unassignedMedia('UPS $25 Part-Timer Campaign'),
   },
   {
     slug: 'kellogg-strike',
@@ -44,35 +94,35 @@ export const projects: Project[] = [
     category: 'Labor',
     clientOutlet: 'More Perfect Union',
     roles: [],
-    isDraft: true,
+    media: unassignedMedia('Kellogg Strike'),
   },
   {
     slug: 'amazon-organizing',
     title: 'Amazon Organizing',
     category: 'Labor',
     roles: [],
-    isDraft: true,
+    media: unassignedMedia('Amazon Organizing'),
   },
   {
     slug: 'tdu-teamsters',
     title: 'TDU / Teamsters',
     category: 'Labor',
     roles: [],
-    isDraft: true,
+    media: unassignedMedia('TDU / Teamsters'),
   },
   {
     slug: 'essential-workers-democracy',
     title: 'Essential Workers for Democracy',
     category: 'Labor',
     roles: [],
-    isDraft: true,
+    media: unassignedMedia('Essential Workers for Democracy'),
   },
   {
     slug: 'art-institute-workers-united',
     title: 'Art Institute Workers United',
     category: 'Labor',
     roles: [],
-    isDraft: true,
+    media: unassignedMedia('Art Institute Workers United'),
   },
   {
     slug: 'gary-indiana-power',
@@ -80,7 +130,7 @@ export const projects: Project[] = [
     category: 'Labor',
     clientOutlet: 'More Perfect Union',
     roles: [],
-    isDraft: true,
+    media: unassignedMedia('Gary Indiana Power Outage'),
   },
 
   // --- POLITICS ---
@@ -89,57 +139,58 @@ export const projects: Project[] = [
     title: 'Miguel Alvelo Rivera for State Representative',
     category: 'Politics',
     roles: ['Media Strategist', 'Producer', 'Director'],
-    context: 'Campaign media strategy and production for Miguel Alvelo Rivera. [DRAFT: Awaiting full editorial context]',
-    isDraft: true,
+    media: {
+      hero: representativeMedia('/media/peter-politics-selection.jpg', 'Miguel Alvelo Rivera project media'),
+    },
   },
   {
     slug: 'claudia-peralta',
     title: 'Claudia Peralta for School Board',
     category: 'Politics',
     roles: [],
-    isDraft: true,
+    media: unassignedMedia('Claudia Peralta for School Board'),
   },
   {
     slug: 'rossana-rodriguez-sanchez',
     title: 'Rossana Rodriguez-Sanchez',
     category: 'Politics',
     roles: [],
-    isDraft: true,
+    media: unassignedMedia('Rossana Rodriguez-Sanchez'),
   },
   {
     slug: 'graciela-guzman',
     title: 'Graciela Guzmán',
     category: 'Politics',
     roles: [],
-    isDraft: true,
+    media: unassignedMedia('Graciela Guzmán'),
   },
   {
     slug: 'byron-sigcho-lopez',
     title: 'Byron Sigcho-Lopez',
     category: 'Politics',
     roles: [],
-    isDraft: true,
+    media: unassignedMedia('Byron Sigcho-Lopez'),
   },
   {
     slug: 'robin-kelly',
     title: 'Robin Kelly',
     category: 'Politics',
     roles: [],
-    isDraft: true,
+    media: unassignedMedia('Robin Kelly'),
   },
   {
     slug: 'raheem-uqdah',
     title: 'Raheem Uqdah',
     category: 'Politics',
     roles: [],
-    isDraft: true,
+    media: unassignedMedia('Raheem Uqdah'),
   },
   {
     slug: 'anthony-quezada',
     title: 'Anthony Quezada',
     category: 'Politics',
     roles: [],
-    isDraft: true,
+    media: unassignedMedia('Anthony Quezada'),
   },
 
   // --- DOCUMENTARY ---
@@ -149,29 +200,62 @@ export const projects: Project[] = [
     category: 'Documentary',
     clientOutlet: 'More Perfect Union',
     roles: ['Director of Photography'],
-    context: 'Visual documentation of data centers in Indiana. [DRAFT: Awaiting full editorial context]',
-    isDraft: true,
+    media: {
+      hero: representativeMedia('/media/peter-documentary-selection.jpg', 'Indiana Data Centers project media'),
+    },
   },
   {
     slug: 'indiana-solar-farms',
     title: 'Indiana Solar Farms',
     category: 'Documentary',
     roles: [],
-    isDraft: true,
+    media: unassignedMedia('Indiana Solar Farms'),
   },
   {
     slug: 'south-bend-doc',
     title: 'South Bend Documentary Work',
     category: 'Documentary',
     roles: [],
-    isDraft: true,
+    media: {
+      hero: representativeMedia('/media/peter-documentary-selection.jpg', 'South Bend Documentary Work project media'),
+    },
   },
 ];
 
+export const homeCuration: {
+  doors: CategoryDoor[];
+  selectedWork: string[];
+} = {
+  doors: [
+    {
+      category: 'Labor',
+      projectSlug: 'colectivo-mpu',
+      media: representativeMedia('/media/peter-labor-door.jpg', 'Labor category representative media'),
+    },
+    {
+      category: 'Politics',
+      projectSlug: 'miguel-alvelo-rivera',
+      media: representativeMedia('/media/peter-politics-door.jpg', 'Politics category representative media'),
+    },
+    {
+      category: 'Documentary',
+      projectSlug: 'indiana-data-centers',
+      media: representativeMedia('/media/peter-documentary-door.jpg', 'Documentary category representative media'),
+    },
+  ],
+  selectedWork: [
+    'colectivo-mpu',
+    'miguel-alvelo-rivera',
+    'indiana-data-centers',
+    'kellogg-strike',
+    'south-bend-doc',
+  ],
+};
+
 export const additionalCredits = [
-  { show: 'Finding Your Roots', outlet: 'PBS', notes: '[DRAFT]' },
-  { show: "I'll Be Gone in the Dark", outlet: 'HBO', notes: '[DRAFT]' },
-  { show: 'Icons Unearthed', outlet: 'Nacelle', notes: '[DRAFT]' },
-  { show: 'Nacelle / Netflix Productions', outlet: 'Netflix', notes: '[DRAFT: Various Roles]' },
-  { show: 'Live Political Production', outlet: 'Various', notes: '[DRAFT]' },
+  { show: 'Finding Your Roots', outlet: 'PBS' },
+  { show: "I'll Be Gone in the Dark", outlet: 'HBO' },
+  { show: 'Icons Unearthed', outlet: 'Nacelle' },
+  { show: 'Nacelle / Netflix Productions', outlet: 'Netflix' },
+  { show: 'Live Political Production', outlet: 'Various' },
 ];

@@ -1,13 +1,98 @@
 import { Link, useRoute } from 'wouter';
-import { Project, projects } from '@/data/content';
+import { MediaItem, Project, projects } from '@/data/content';
+import { MediaItemView } from '@/components/MediaItemView';
 import { Reveal } from '@/components/Reveal';
 import { SEO } from '@/components/SEO';
 import { Thumbnail } from '@/components/Thumbnail';
 
+function getFinishedWorkEmbed(url: string) {
+  try {
+    const parsed = new URL(url);
+    const host = parsed.hostname.replace(/^www\./, '');
+
+    if (host === 'youtube.com' || host === 'youtu.be' || host === 'youtube-nocookie.com') {
+      const videoId = host === 'youtu.be'
+        ? parsed.pathname.slice(1)
+        : parsed.searchParams.get('v') || parsed.pathname.split('/').filter(Boolean).pop();
+      return videoId ? `https://www.youtube-nocookie.com/embed/${videoId}?rel=0` : null;
+    }
+
+    if (host === 'vimeo.com' || host === 'player.vimeo.com') {
+      const videoId = parsed.pathname.split('/').filter(Boolean).pop();
+      return videoId ? `https://player.vimeo.com/video/${videoId}` : null;
+    }
+  } catch {
+    return null;
+  }
+
+  return null;
+}
+
+function FinishedWork({ project }: { project: Project }) {
+  const url = project.media.finishedWorkUrl;
+  if (!url) return null;
+
+  const embedUrl = getFinishedWorkEmbed(url);
+  if (!embedUrl) {
+    return (
+      <a
+        href={url}
+        target="_blank"
+        rel="noreferrer"
+        className="case-study__link"
+        data-testid={`link-finished-work-${project.slug}`}
+      >
+        View finished work
+      </a>
+    );
+  }
+
+  return (
+    <div className="finished-work" data-testid={`embed-finished-work-${project.slug}`}>
+      <iframe
+        src={embedUrl}
+        title={`${project.title} finished work`}
+        loading="lazy"
+        allow="autoplay; fullscreen; picture-in-picture"
+        allowFullScreen
+      />
+      <a
+        href={url}
+        target="_blank"
+        rel="noreferrer"
+        className="case-study__link"
+        data-testid={`link-finished-work-${project.slug}`}
+      >
+        Open finished work
+      </a>
+    </div>
+  );
+}
+
+function ProjectGallery({ project }: { project: Project }) {
+  const gallery = project.media.gallery;
+  if (!gallery?.length) return null;
+
+  return (
+    <Reveal className="case-study__stills" margin="-80px">
+      {gallery.map((media: MediaItem, index) => (
+        <figure key={`${media.src || media.alt}-${index}`}>
+          <MediaItemView
+            media={media}
+            fallback={project.media.hero}
+            className="case-study__gallery-media"
+            testId={`gallery-media-${project.slug}-${index}`}
+          />
+          {media.caption ? <figcaption>{media.caption}</figcaption> : null}
+        </figure>
+      ))}
+    </Reveal>
+  );
+}
+
 export default function ProjectSlug() {
   const [, params] = useRoute('/project/:slug');
   const project = projects.find((item) => item.slug === params?.slug);
-  const additionalStills = (project as (Project & { additionalStills?: string[] }) | undefined)?.additionalStills;
 
   if (!project) {
     return (
@@ -36,26 +121,24 @@ export default function ProjectSlug() {
         </Reveal>
 
         <Reveal animation="scale" delay={0.1} className="case-study__hero">
-          <Thumbnail project={project} />
+          <Thumbnail project={project} media={project.media.hero} />
         </Reveal>
 
         <div className="case-study__body">
           <Reveal className="case-study__facts">
             <dl>
-              <div className="case-study__fact">
-                <dt>Roles</dt>
-                <dd>{project.roles.length ? project.roles.join(' / ') : 'Unverified'}</dd>
-              </div>
-              <div className="case-study__fact">
-                <dt>Client / outlet</dt>
-                <dd>{project.clientOutlet || 'Unverified'}</dd>
-              </div>
-              {project.isDraft && (
+              {project.roles.length ? (
                 <div className="case-study__fact">
-                  <dt>Status</dt>
-                  <dd>Draft entry</dd>
+                  <dt>Roles</dt>
+                  <dd>{project.roles.join(' / ')}</dd>
                 </div>
-              )}
+              ) : null}
+              {project.clientOutlet ? (
+                <div className="case-study__fact">
+                  <dt>Client / outlet</dt>
+                  <dd>{project.clientOutlet}</dd>
+                </div>
+              ) : null}
               {project.credits?.length ? (
                 <div className="case-study__fact">
                   <dt>Credits</dt>
@@ -68,11 +151,7 @@ export default function ProjectSlug() {
           </Reveal>
 
           <Reveal delay={0.12} className="case-study__copy">
-            {project.context ? (
-              <p>{project.context}</p>
-            ) : (
-              <p className="case-study__pending">Editorial context pending verification.</p>
-            )}
+            {project.context ? <p>{project.context}</p> : null}
 
             {project.pressOutcomes?.length ? (
               <>
@@ -83,32 +162,11 @@ export default function ProjectSlug() {
               </>
             ) : null}
 
-            {project.embedUrl ? (
-              <a
-                href={project.embedUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="case-study__link"
-                data-testid={`link-finished-work-${project.slug}`}
-              >
-                View finished work
-              </a>
-            ) : null}
+            <FinishedWork project={project} />
           </Reveal>
         </div>
 
-        {additionalStills?.length ? (
-          <Reveal className="case-study__stills" margin="-80px">
-            {additionalStills.map((still, index) => (
-              <img
-                key={still}
-                src={still}
-                alt={`${project.title} still ${index + 1}`}
-                data-testid={`image-additional-still-${project.slug}-${index}`}
-              />
-            ))}
-          </Reveal>
-        ) : null}
+        <ProjectGallery project={project} />
       </article>
     </>
   );
